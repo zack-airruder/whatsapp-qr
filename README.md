@@ -192,10 +192,6 @@ The API handles various error scenarios:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 🆘 Support
 
 - **Issues**: Report bugs or request features via GitHub Issues
@@ -215,6 +211,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Made with ❤️ for the developer community**
+**Made by Zack Loo f**
 
 *Generate WhatsApp QR codes instantly with zero configuration!*
