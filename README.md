@@ -160,21 +160,21 @@ php -S localhost:8080
 
 Then access: `http://localhost:8080/qrapi.html?phone=60123456789&message=Test`
 
-## 📱 Mobile Optimization
+## Mobile Optimization
 
 - **Responsive Design**: Automatically adapts to mobile screens
 - **Touch-Friendly**: Large buttons and touch targets
 - **Fast Loading**: Optimized for mobile networks
 - **Auto-Download**: QR codes download automatically on mobile devices
 
-## 🔒 Privacy & Security
+## Privacy & Security
 
 - **No Data Storage**: No phone numbers or messages are stored
 - **Client-Side Processing**: All processing happens in the browser
 - **HTTPS Ready**: Secure transmission when hosted with SSL
 - **No Tracking**: No analytics or tracking scripts included
 
-## ⚠️ Error Handling
+## Error Handling
 
 The API handles various error scenarios:
 
@@ -184,7 +184,7 @@ The API handles various error scenarios:
 - **QR Generation Failed**: Automatic fallback to basic QR pattern
 - **Logo Load Failed**: Fallback to emoji icon
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
@@ -192,13 +192,13 @@ The API handles various error scenarios:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 🆘 Support
+## Support
 
 - **Issues**: Report bugs or request features via GitHub Issues
 - **Documentation**: Check this README for comprehensive usage guide
 - **Community**: Join discussions in GitHub Discussions
 
-## 🔄 Changelog
+## Changelog
 
 ### v1.0.0
 - Initial release
@@ -211,6 +211,6 @@ The API handles various error scenarios:
 
 ---
 
-**Made by Zack Loo f**
+**Made by Zack Loo **
 
 *Generate WhatsApp QR codes instantly with zero configuration!*
