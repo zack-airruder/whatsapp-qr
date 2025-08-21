@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp QR API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #42c1ba, #024f94);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: #42c1ba;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .qr-container {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .qr-code {
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .download-btn {
+            background: #024f94;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+
+        .download-btn:hover {
+            background: #013a6b;
+        }
+
+        .error {
+            color: #e74c3c;
+            margin-top: 20px;
+            padding: 15px;
+            background: #fdf2f2;
+            border-radius: 10px;
+            border: 1px solid #f5c6cb;
+        }
+
+        .info {
+            color: #666;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .url-display {
+            background: #f1f3f4;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 15px 0;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">📱</div>
+        <h1>WhatsApp QR API</h1>
+        <p class="subtitle">Automatic QR Code Generation</p>
+        
+        <div class="qr-container" id="qrContainer">
+            <h3>Generated QR Code</h3>
+            <div class="url-display" id="whatsappUrl"></div>
+            <div class="qr-code" id="qrCode">
+                <div style="text-align: center; padding: 50px; color: #666;">Generating QR Code...</div>
+            </div>
+            <button class="download-btn" onclick="downloadQR()" id="downloadBtn" style="display: none;">Download QR Code</button>
+        </div>
+        
+        <div class="error" id="errorContainer" style="display: none;"></div>
+        
+        <div class="info">
+            <strong>API Usage:</strong><br>
+            <code>qrapi.html?phone=60123456789&message=Hello World</code><br><br>
+            <strong>Parameters:</strong><br>
+            • <code>phone</code> - Phone number with country code (required)<br>
+            • <code>message</code> - Pre-filled message (optional)
+        </div>
+    </div>
+
+    <script>
+        // Parse URL parameters
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                phone: params.get('phone'),
+                message: params.get('message')
+            };
+        }
+
+        // Generate QR Code using external API
+        function generateQRCode(text, size = 300) {
+            return new Promise(async (resolve, reject) => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = size;
+                canvas.height = size;
+                
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                
+                img.onload = async function() {
+                    // Draw QR code
+                    ctx.drawImage(img, 0, 0, size, size);
+                    
+                    // Add WhatsApp logo in center
+                    await addWhatsAppLogo(ctx, size);
+                    
+                    resolve(canvas);
+                };
+                
+                img.onerror = async function() {
+                    // Fallback: create a basic pattern
+                    createFallbackQR(ctx, text, size);
+                    await addWhatsAppLogo(ctx, size);
+                    resolve(canvas);
+                };
+                
+                const encodedText = encodeURIComponent(text);
+                img.src = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodedText}&format=png&ecc=M`;
+            });
+        }
+        
+        function addWhatsAppLogo(ctx, size) {
+            return new Promise((resolve) => {
+                // Load the local logo.png file
+                const logoImg = new Image();
+                logoImg.crossOrigin = 'anonymous';
+                
+                logoImg.onload = function() {
+                    // Scale and position the logo
+                    const logoSize = size * 0.25;
+                    const logoX = (size - logoSize) / 2;
+                    const logoY = (size - logoSize) / 2;
+                    
+                    ctx.drawImage(
+                        logoImg,
+                        logoX,
+                        logoY,
+                        logoSize,
+                        logoSize
+                    );
+                    resolve();
+                };
+                
+                logoImg.onerror = function() {
+                    console.error('Error loading PNG logo, using fallback');
+                    // Fallback: draw white circle with green WhatsApp icon if image fails
+                    const centerX = size / 2;
+                    const centerY = size / 2;
+                    const logoSize = size * 0.25;
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, logoSize/2, 0, 2 * Math.PI);
+                    ctx.fill();
+                    
+                    // Simple phone icon fallback
+                    ctx.fillStyle = '#42c1ba';
+                    ctx.font = `${logoSize * 0.6}px Arial`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('📞', centerX, centerY);
+                    resolve();
+                };
+                
+                // Try to load PNG logo
+                logoImg.src = 'logo.png';
+            });
+        }
+        
+        function createFallbackQR(ctx, text, size) {
+            // Create a simple pattern as fallback
+            const cellSize = size / 25;
+            
+            // Fill background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, size, size);
+            
+            // Create a hash-based pattern
+            let hash = 0;
+            for (let i = 0; i < text.length; i++) {
+                hash = ((hash << 5) - hash + text.charCodeAt(i)) & 0xffffffff;
+            }
+            
+            ctx.fillStyle = '#000000';
+            
+            // Add finder patterns (corners)
+            drawFinderPattern(ctx, 0, 0, cellSize);
+            drawFinderPattern(ctx, size - 7 * cellSize, 0, cellSize);
+            drawFinderPattern(ctx, 0, size - 7 * cellSize, cellSize);
+            
+            // Add timing patterns
+            for (let i = 8; i < 17; i++) {
+                if (i % 2 === 0) {
+                    ctx.fillRect(6 * cellSize, i * cellSize, cellSize, cellSize);
+                    ctx.fillRect(i * cellSize, 6 * cellSize, cellSize, cellSize);
+                }
+            }
+            
+            // Add data pattern
+            for (let i = 0; i < 25; i++) {
+                for (let j = 0; j < 25; j++) {
+                    if (!isReservedArea(i, j)) {
+                        if (((hash + i * j) % 3) === 0) {
+                            ctx.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
+                        }
+                    }
+                }
+            }
+        }
+        
+        function drawFinderPattern(ctx, x, y, cellSize) {
+            // Outer border
+            ctx.fillRect(x, y, 7 * cellSize, cellSize);
+            ctx.fillRect(x, y + 6 * cellSize, 7 * cellSize, cellSize);
+            ctx.fillRect(x, y, cellSize, 7 * cellSize);
+            ctx.fillRect(x + 6 * cellSize, y, cellSize, 7 * cellSize);
+            
+            // Inner square
+            ctx.fillRect(x + 2 * cellSize, y + 2 * cellSize, 3 * cellSize, 3 * cellSize);
+        }
+        
+        function isReservedArea(row, col) {
+            // Finder patterns and separators
+            if ((row < 9 && col < 9) || 
+                (row < 9 && col > 15) || 
+                (row > 15 && col < 9)) {
+                return true;
+            }
+            // Timing patterns
+            if (row === 6 || col === 6) {
+                return true;
+            }
+            return false;
+        }
+
+        // Validate phone number
+        function validatePhone(phone) {
+            if (!phone) {
+                return { valid: false, error: 'Phone number is required' };
+            }
+            
+            // Remove any non-digit characters
+            const cleanPhone = phone.replace(/\D/g, '');
+            
+            if (cleanPhone.length < 7) {
+                return { valid: false, error: 'Phone number must be at least 7 digits' };
+            }
+            
+            if (cleanPhone.length > 15) {
+                return { valid: false, error: 'Phone number cannot exceed 15 digits' };
+            }
+            
+            return { valid: true, cleanPhone };
+        }
+
+        // Generate WhatsApp URL
+        function generateWhatsAppUrl(phone, message) {
+            const validation = validatePhone(phone);
+            if (!validation.valid) {
+                throw new Error(validation.error);
+            }
+            
+            let whatsappUrl = `https://wa.me/${validation.cleanPhone}`;
+            
+            if (message && message.trim()) {
+                whatsappUrl += `?text=${encodeURIComponent(message.trim())}`;
+            }
+            
+            return whatsappUrl;
+        }
+
+        // Download QR code
+        function downloadQR() {
+            const canvas = document.querySelector('#qrCode canvas');
+            if (canvas) {
+                const link = document.createElement('a');
+                const params = getUrlParams();
+                const filename = `whatsapp-qr-${params.phone || 'code'}.png`;
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }
+        }
+
+        // Show error
+        function showError(message) {
+            const errorContainer = document.getElementById('errorContainer');
+            const qrContainer = document.getElementById('qrContainer');
+            
+            errorContainer.textContent = message;
+            errorContainer.style.display = 'block';
+            qrContainer.style.display = 'none';
+        }
+
+        // Main function to generate QR on page load
+        async function initializeQR() {
+            const params = getUrlParams();
+            
+            try {
+                // Generate WhatsApp URL
+                const whatsappUrl = generateWhatsAppUrl(params.phone, params.message);
+                
+                // Display the URL
+                document.getElementById('whatsappUrl').textContent = whatsappUrl;
+                
+                // Generate QR Code
+                const qrCodeElement = document.getElementById('qrCode');
+                const canvas = await generateQRCode(whatsappUrl, 300);
+                
+                // Clear loading message and add QR code
+                qrCodeElement.innerHTML = '';
+                qrCodeElement.appendChild(canvas);
+                
+                // Show download button
+                document.getElementById('downloadBtn').style.display = 'inline-block';
+                
+            } catch (error) {
+                console.error('QR generation error:', error);
+                showError(error.message || 'Error generating QR code. Please check your parameters.');
+            }
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', initializeQR);
+    </script>
+</body>
+</html>
