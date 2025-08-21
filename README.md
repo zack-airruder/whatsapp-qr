@@ -20,7 +20,7 @@
 
 ### HTML Link
 ```html
-<a href="https://yourdomain.com/qrapi.html?phone=60123456789&message=Hi%20there!" target="_blank">
+<a href="https://zack-airruder.github.io/whatsapp-qr/qrapi.html?phone=60123456789&message=Hi%20there!" target="_blank">
     Generate WhatsApp QR Code
 </a>
 ```
@@ -28,7 +28,7 @@
 ### JavaScript
 ```javascript
 function generateWhatsAppQR(phone, message) {
-    const baseUrl = 'https://yourdomain.com/qrapi.html';
+    const baseUrl = 'https://zack-airruder.github.io/whatsapp-qr/qrapi.html';
     const params = new URLSearchParams({
         phone: phone,
         message: message || ''
@@ -47,7 +47,7 @@ import React from 'react';
 
 const WhatsAppQRGenerator = ({ phone, message, children }) => {
     const generateQR = () => {
-        const baseUrl = 'https://yourdomain.com/qrapi.html';
+        const baseUrl = 'https://zack-airruder.github.io/whatsapp-qr/qrapi.html';
         const params = new URLSearchParams({
             phone,
             ...(message && { message })
@@ -76,7 +76,7 @@ const WhatsAppQRGenerator = ({ phone, message, children }) => {
 ```php
 <?php
 function generateWhatsAppQRUrl($phone, $message = '') {
-    $baseUrl = 'https://yourdomain.com/qrapi.html';
+    $baseUrl = 'https://zack-airruder.github.io/whatsapp-qr/qrapi.html';
     $params = http_build_query([
         'phone' => $phone,
         'message' => $message
@@ -109,7 +109,7 @@ For messages with special characters, ensure proper URL encoding:
 ```javascript
 const message = "Hello! How are you? 😊";
 const encodedMessage = encodeURIComponent(message);
-const url = `https://yourdomain.com/qrapi.html?phone=60123456789&message=${encodedMessage}`;
+const url = `https://zack-airruder.github.io/whatsapp-qr/qrapi.html?phone=60123456789&message=${encodedMessage}`;
 ```
 
 ### Batch Generation
@@ -122,7 +122,7 @@ const contacts = [
 
 contacts.forEach((contact, index) => {
     setTimeout(() => {
-        const url = `https://yourdomain.com/qrapi.html?phone=${contact.phone}&message=${encodeURIComponent(contact.message)}`;
+        const url = `https://zack-airruder.github.io/whatsapp-qr/qrapi.html?phone=${contact.phone}&message=${encodeURIComponent(contact.message)}`;
         window.open(url, '_blank');
     }, index * 1000); // 1 second delay between each
 });
